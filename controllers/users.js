@@ -1,10 +1,19 @@
 import {v4 as uuid} from 'uuid';
+import {sql} from '../db.js' 
 
 let users = []
 
-export const getUsers = (req,res)=>{
-    console.log(`Users in the database :${users}`);
-    res.send(users);
+export const getUsers = async(req,res)=>{
+    try {
+        const query = sql`SELECT id,name,email,created_at FROM users`;
+
+        const users = await query;
+        console.log(`Users in the database:`,users);
+        res.json(users);
+    } catch (error) {
+        console.error('Error fetching users:',error);
+        res.status(500).json({error:'Internal server error'});
+    }
 }
 
 export const createUser = (req,res)=>{
